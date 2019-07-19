@@ -1,0 +1,24 @@
+{
+  "name": "@mmckelvy/pg-query",
+  "version": "1.0.0",
+  "description": "Run Postgres queries with Node",
+  "main": "index.js",
+  "scripts": {
+    "test": "ava"
+  },
+  "keywords": [
+    "query",
+    "postgres",
+    "postgresql"
+  ],
+  "ava": {
+    "files": [
+      "test/*.test.js"
+    ]
+  },
+  "author": "Mark McKelvy",
+  "license": "MIT",
+  "devDependencies": {
+    "ava": "^2.2.0"
+  }
+}
