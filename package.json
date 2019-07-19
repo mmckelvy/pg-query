@@ -1,7 +1,7 @@
 {
   "name": "@mmckelvy/pg-query",
   "version": "1.0.0",
-  "description": "Run Postgres queries with Node",
+  "description": "Execute .sql file Postgres queries with Node",
   "main": "index.js",
   "scripts": {
     "test": "ava"
