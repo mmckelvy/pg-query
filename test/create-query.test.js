@@ -33,3 +33,20 @@ test('createQuery - Work with numbers and do not mess up types', async (t) => {
 
   t.deepEqual(actual, expected);
 });
+
+test('createQuery - Handle arrays', async (t) => {
+  const actual = await createQuery({
+    sql: './test/array-query.sql',
+    values: {
+      listOfNames: ['John', 'Mary', 'Joe']
+    }
+  });
+
+
+  const expected = {
+    text: `insert into foo (a) values ($1);`,
+    values: [['John', 'Mary', 'Joe']]
+  };
+
+  t.deepEqual(actual, expected);
+});
