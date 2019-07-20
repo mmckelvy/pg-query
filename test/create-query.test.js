@@ -16,3 +16,20 @@ test('createQuery - Should create a proper query', async (t) => {
 
   t.deepEqual(actual, expected);
 });
+
+test('createQuery - Work with numbers and do not mess up types', async (t) => {
+  const actual = await createQuery({
+    sql: './test/complex-query.sql',
+    values: {
+      companyOwnerId: 25
+    }
+  });
+
+
+  const expected = {
+    text: `select account_id from chart_of_accounts where account_name ~ ( select '*.' || co.owner_account_name || '.*' from company_owner as co where co.company_owner_id = $1 )::lquery;`.replace(/\s+/g, ' '),
+    values: [25]
+  };
+
+  t.deepEqual(actual, expected);
+});
