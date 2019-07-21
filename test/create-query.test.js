@@ -5,13 +5,13 @@ const createQuery = require('../lib/create-query');
 test('createQuery - Should create a proper query', async (t) => {
   const actual = await createQuery({
     sql: './test/query.sql',
-    values: {foo: 'John'}
+    values: {foo: 'John', bar: 'Steve'}
   });
 
 
   const expected = {
-    text: `select first_name, last_name from my_table where first_name = $1;`,
-    values: ['John']
+    text: `select first_name, last_name from my_table where first_name = $1 and last_name = $2;`.replace(/\s+/g, ' '),
+    values: ['John', 'Steve']
   };
 
   t.deepEqual(actual, expected);
