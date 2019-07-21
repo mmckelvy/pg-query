@@ -19,7 +19,9 @@
   "author": "Mark McKelvy",
   "license": "MIT",
   "devDependencies": {
-    "ava": "^2.2.0"
+    "ava": "^2.2.0",
+    "pg": "^7.11.0",
+    "uuid": "^3.3.2"
   },
   "dependencies": {}
 }
