@@ -12,7 +12,7 @@ const query = require('../lib/query');
 test.before(async (t) => {
   const db = uuid();
   await execAsync(`createdb ${db}`);
-  const pool = new Pool({db})
+  t.context.pool = new Pool({db});
   t.context.db = uuid();
 
   await pool.query(`create table user_account (first_name text, last_name text);`);
@@ -20,9 +20,14 @@ test.before(async (t) => {
 
 
 test('query - Should query the db', async (t) => {
+  const res = await query({
+    pool: t.context.pool,
+    sql: './'
+  })
 
+  t.pass('Great stuff');
 });
 
 test.after.always('Teardown db', async (t) => {
-  await
+  await t.context.pool.end()
 });

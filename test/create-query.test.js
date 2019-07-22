@@ -1,11 +1,13 @@
+const path = require('path');
 const test = require('ava');
 
 const createQuery = require('../lib/create-query');
 
 test('createQuery - Should create a proper query', async (t) => {
+  console.log(path.join(__dirname));
   const actual = await createQuery({
-    sql: './test/query.sql',
-    values: {foo: 'John', bar: 'Steve'}
+    sql: path.join(__dirname, './query.sql'),
+    values: {foo: 'John', bar: 'Steve'},
   });
 
 
@@ -19,7 +21,7 @@ test('createQuery - Should create a proper query', async (t) => {
 
 test('createQuery - Work with numbers and do not mess up types', async (t) => {
   const actual = await createQuery({
-    sql: './test/complex-query.sql',
+    sql: path.join(__dirname, './complex-query.sql'),
     values: {
       companyOwnerId: 25
     }
@@ -36,7 +38,7 @@ test('createQuery - Work with numbers and do not mess up types', async (t) => {
 
 test('createQuery - Handle arrays', async (t) => {
   const actual = await createQuery({
-    sql: './test/array-query.sql',
+    sql: path.join(__dirname, './array-query.sql'),
     values: {
       listOfNames: ['John', 'Mary', 'Joe']
     }
