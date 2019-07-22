@@ -4,7 +4,6 @@ const test = require('ava');
 const createQuery = require('../lib/create-query');
 
 test('createQuery - Should create a proper query', async (t) => {
-  console.log(path.join(__dirname));
   const actual = await createQuery({
     sql: path.join(__dirname, './query.sql'),
     values: {foo: 'John', bar: 'Steve'},

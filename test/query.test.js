@@ -1,33 +1,44 @@
+const path = require('path');
 const { exec } = require('child_process');
 const { promisify } = require('util');
 
 const test = require('ava');
 const uuid = require('uuid/v4');
-const { Pool } = require('pg')
+const { Pool } = require('pg');
 
 const execAsync = promisify(exec);
 const query = require('../lib/query');
 
-// need to do some setup and teardown.
 test.before(async (t) => {
-  const db = uuid();
-  await execAsync(`createdb ${db}`);
-  t.context.pool = new Pool({db});
   t.context.db = uuid();
+  await execAsync(`createdb ${t.context.db}`);
+  t.context.pool = new Pool({
+    database: t.context.db
+  });
 
-  await pool.query(`create table user_account (first_name text, last_name text);`);
+  await t.context.pool.query(`
+    create table user_account (first_name text, last_name text);
+  `);
+  await t.context.pool.query(`
+    insert into user_account (first_name, last_name) values ('Joe', 'Smith')
+  `);
 });
 
-
 test('query - Should query the db', async (t) => {
-  const res = await query({
+  const { rows: actual } = await query({
     pool: t.context.pool,
-    sql: './'
+    sql: path.join(__dirname, './get-user.sql'),
+    values: {lastName: 'Smith'}
   })
 
-  t.pass('Great stuff');
+  const expected = [
+    {first_name: 'Joe', last_name: 'Smith'}
+  ];
+
+  t.deepEqual(actual, expected);
 });
 
 test.after.always('Teardown db', async (t) => {
-  await t.context.pool.end()
+  await t.context.pool.end();
+  await execAsync(`dropdb ${t.context.db}`);
 });
