@@ -6,6 +6,10 @@
   "scripts": {
     "test": "ava"
   },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:mmckelvy/pg-query.git"
+  },
   "keywords": [
     "query",
     "postgres",
