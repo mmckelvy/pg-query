@@ -1,4 +1,3 @@
-const path = require('path');
 const { exec } = require('child_process');
 const { promisify } = require('util');
 
@@ -27,9 +26,22 @@ test.before(async (t) => {
 test('query - Should query the db', async (t) => {
   const { rows: actual } = await query({
     pool: t.context.pool,
-    sql: path.join(__dirname, './get-user.sql'),
+    sql: `${__dirname}/get-user.sql`,
     values: {lastName: 'Smith'}
-  })
+  });
+
+  const expected = [
+    {first_name: 'Joe', last_name: 'Smith'}
+  ];
+
+  t.deepEqual(actual, expected);
+});
+
+test('query - Should work with no params', async (t) => {
+  const { rows: actual } = await query({
+    pool: t.context.pool,
+    sql: `${__dirname}/no-params.sql`
+  });
 
   const expected = [
     {first_name: 'Joe', last_name: 'Smith'}
