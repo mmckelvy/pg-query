@@ -39,7 +39,7 @@ console.log(q);
 */
 ```
 
-Usually you'll want to use the result of `createQuery` directly with `node-postgres` `pool.query` or `client.query` methods to actually execute a Postgres query.  `pg-query` provides a `query` method that does exactly that.  Just pass in the `pool` object from `node-postgres` in addition to the `sql` and `values` params:
+Usually you'll want to use the result of `createQuery` directly with node-postgres `pool.query` or `client.query` methods to actually execute a Postgres query.  `pg-query` provides a `query` method that does exactly that.  Just pass in the `pool` object from `node-postgres` in addition to the `sql` and `values` params:
 
 ```javascript
 const { query } = require('@mmckelvy/pg-query');
@@ -72,7 +72,7 @@ An object with keys that map to variable names in your `.sql` files.
 A node-postgres query config object with `text` and `values` keys.  `text` will be in parameterized query form and the values will be in a corresponding array.
 
 ### async query({ pool, client, sql, values })
-Same params as `createQuery`, with the addition of `pool`, which is an instance of node-postgres `Pool` and `client`, which is a `client` from the `pool` (you will only be using pool or client but not both for any given query).
+Same params as `createQuery`, with the addition of `pool`, which is an instance of node-postgres `Pool`, and `client`, which is a `client` from the `pool` (you will only be using pool or client but not both for any given query).
 
 This function will create a node-postgres query config object using `createQuery` and then execute the query using your `pool` or `client` instance.
 
