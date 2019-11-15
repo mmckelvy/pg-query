@@ -61,3 +61,18 @@ test('createQuery - Handle arrays', async (t) => {
 
   t.deepEqual(actual, expected);
 });
+
+test('createQuery - Should remove comments', async (t) => {
+  const actual = await createQuery({
+    sql: `${__dirname}/with-comments.sql`,
+    values: {firstName: 'John', lastName: 'Steve'},
+  });
+
+
+  const expected = {
+    text: `select first_name, last_name from my_table where first_name = $1 and last_name = $2;`.replace(/\s+/g, ' '),
+    values: ['John', 'Steve']
+  };
+
+  t.deepEqual(actual, expected);
+});
