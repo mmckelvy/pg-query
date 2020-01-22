@@ -24,23 +24,57 @@ test.before(async (t) => {
 });
 
 test('query - Should query the db', async (t) => {
-  const { rows: actual } = await query({
+  const actual = await query({
     pool: t.context.pool,
     sql: `${__dirname}/get-user.sql`,
-    values: {lastName: 'Smith'}
+    values: {lastName: 'Smith'},
+    transform: true
   });
 
   const expected = [
-    {first_name: 'Joe', last_name: 'Smith'}
+    {firstName: 'Joe', lastName: 'Smith'}
   ];
 
   t.deepEqual(actual, expected);
 });
 
 test('query - Should work with no params', async (t) => {
-  const { rows: actual } = await query({
+  const actual = await query({
     pool: t.context.pool,
-    sql: `${__dirname}/no-params.sql`
+    sql: `${__dirname}/no-params.sql`,
+    transform: true
+  });
+
+  const expected = [
+    {firstName: 'Joe', lastName: 'Smith'}
+  ];
+
+  t.deepEqual(actual, expected);
+});
+
+test('query - Should skip transforms', async (t) => {
+  const actual = await query({
+    pool: t.context.pool,
+    sql: `${__dirname}/get-user.sql`,
+    values: {lastName: 'Smith'},
+  });
+
+  const expected = [
+    {first_name: 'Joe', last_name: 'Smith'}
+  ];
+
+  t.deepEqual(actual.rows, expected);
+});
+
+test('query - Should handle a custom transform', async (t) => {
+  const actual = await query({
+    pool: t.context.pool,
+    sql: `${__dirname}/get-user.sql`,
+    values: {lastName: 'Smith'},
+    transform: true,
+    transformFn(results) {
+      return results.rows;
+    }
   });
 
   const expected = [
