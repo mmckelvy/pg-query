@@ -76,3 +76,19 @@ test('createQuery - Should remove comments', async (t) => {
 
   t.deepEqual(actual, expected);
 });
+
+test('createQuery - Should convert undefined keys to null', async (t) => {
+  const actual = await createQuery({
+    sql: `${__dirname}/with-nulls.sql`,
+    values: {firstName: 'John'},
+  });
+
+  const expected = {
+    text: `select first_name, last_name from my_table where first_name = $1 and (null is null or last_name = null);`.replace(/\s+/g, ' '),
+    values: ['John']
+  };
+
+  t.deepEqual(actual, expected);
+});
+
+
