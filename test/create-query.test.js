@@ -91,4 +91,19 @@ test('createQuery - Should convert undefined keys to null', async (t) => {
   t.deepEqual(actual, expected);
 });
 
+test('createQuery - Should convert undefined keys to default', async (t) => {
+  const actual = await createQuery({
+    sql: `${__dirname}/with-defaults.sql`,
+    values: {firstName: 'John'},
+    convertUndefined: 'toDefault'
+  });
+
+  const expected = {
+    text: `insert into user_account (first_name, last_name) values ($1, default);`.replace(/\s+/g, ' '),
+    values: ['John']
+  };
+
+  t.deepEqual(actual, expected);
+});
+
 
