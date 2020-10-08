@@ -84,6 +84,20 @@ test('query - Should handle a custom transform', async (t) => {
   t.deepEqual(actual, expected);
 });
 
+test('query - Should handle defaults', async (t) => {
+  const actual = await query({
+    pool: t.context.pool,
+    sql: `${__dirname}/with-defaults.sql`,
+    values: {firstName: 'Bill'}
+  });
+
+  const expected = [
+    {first_name: 'Bill', last_name: null}
+  ];
+
+  t.deepEqual(actual.rows, expected);
+});
+
 test.after.always('Teardown db', async (t) => {
   await t.context.pool.end();
   await execAsync(`dropdb ${t.context.db}`);

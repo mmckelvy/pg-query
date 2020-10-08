@@ -99,11 +99,9 @@ test('createQuery - Should convert undefined keys to default', async (t) => {
   });
 
   const expected = {
-    text: `insert into user_account (first_name, last_name) values ($1, default);`.replace(/\s+/g, ' '),
+    text: `insert into user_account (first_name, last_name) values ($1, default) returning *;`.replace(/\s+/g, ' '),
     values: ['John']
   };
 
   t.deepEqual(actual, expected);
 });
-
-
