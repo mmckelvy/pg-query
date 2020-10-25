@@ -105,3 +105,35 @@ test('createQuery - Should convert undefined keys to default', async (t) => {
 
   t.deepEqual(actual, expected);
 });
+
+test('createQuery - Should handle similar variable names', async (t) => {
+  const actual = await createQuery({
+    sql: `${__dirname}/variable-names.sql`,
+    values: {message: 'John', messageTimestamp: '2020-10-12T18:20:03.414Z'},
+  });
+
+  const expected = {
+    text: `select message, message_timestamp from my_table where message = $1 and message_timestamp = $2;`.replace(/\s+/g, ' '),
+    values: ['John', '2020-10-12T18:20:03.414Z']
+  };
+
+  t.deepEqual(actual, expected);
+});
+
+test('createQuery - Should handle undefined similar names', async (t) => {
+  const actual = await createQuery({
+    sql: `${__dirname}/variable-names.sql`,
+    values: {message: 'John'},
+    convertUndefined: 'toDefault'
+  });
+
+  const expected = {
+    text: `select message, message_timestamp from my_table where message = $1 and message_timestamp = default;`.replace(/\s+/g, ' '),
+    values: ['John']
+  };
+
+  t.deepEqual(actual, expected);
+});
+
+
+
