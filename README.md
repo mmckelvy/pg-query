@@ -60,7 +60,7 @@ console.log(rows);
 ```
 
 ### Handling undefined / optional values
-Sometimes you'll want to use values that may or may not be present (i.e. they will be `undefined`) in your queries.  This typically happens when you have optional fields for `inserts` or dynamic filter parameters for `where` clauses.  To handle these potentially undefined fields, pg-query gives you the option to convert them to `null` or `default`.  Just pass in the appropriate option like so:
+Sometimes you'll want to use values that may or may not be present (i.e. they will be `undefined`) in your queries.  This typically happens when you have optional fields for `inserts` or dynamic filter parameters for `where` clauses.  To handle these potentially undefined fields, pg-query gives you the option to convert them to `null` or `default` (you can also just leave them as is).  Just pass in the appropriate option like so:
 
 ```javascript
 const { createQuery } = require('@mmckelvy/pg-query');
@@ -77,6 +77,12 @@ const x = await createQuery({
   convertUndefined: 'toDefault' // converts any undefined values to 'default'
 });
 
+const z = await createQuery({
+  sql: `${__dirname/query.sql}`,
+  values: {firstName: 'John', lastName: 'Smith'},
+  convertUndefined: 'ignore' // don't attempt any conversions
+});
+
 ```
 If you don't pass anything for `convertUndefined`, `toNull` will be used.
 
@@ -91,7 +97,7 @@ An absolute path to the `.sql` file with your query.  It's generally easiest to 
 An object with keys that map to variable names in your `.sql` files.
 
 #### convertUndefined `string`
-How to treat `undefined` values in the sql string.  Pass `'toNull'` to convert undefined values to `null` and `'toDefault'` to convert undefined values to `'default'`.
+How to treat `undefined` values in the sql string.  Pass `'toNull'` to convert undefined values to `null` and `'toDefault'` to convert undefined values to `'default'`, and `'ignore'` to just leave them as is (helpful if you are using the ":" character to format times or something along those lines).
 
 #### return `object`
 A node-postgres query config object with `text` and `values` keys.  `text` will be in parameterized query form and the values will be in a corresponding array.
