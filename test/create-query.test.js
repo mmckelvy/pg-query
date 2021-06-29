@@ -135,5 +135,17 @@ test('createQuery - Should handle undefined similar names', async (t) => {
   t.deepEqual(actual, expected);
 });
 
+test('createQuery - Should handle ignore cases', async (t) => {
+  const actual = await createQuery({
+    sql: `${__dirname}/ignore.sql`,
+    values: {firstName: 'John'},
+    convertUndefined: 'ignore'
+  });
 
+  const expected = {
+    text: `select first_name, to_char(start_time, 'HH24:MI') as start from schedule where first_name = $1;`.replace(/\s+/g, ' '),
+    values: ['John']
+  };
 
+  t.deepEqual(actual, expected);
+});
