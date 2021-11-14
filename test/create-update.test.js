@@ -14,7 +14,7 @@ test('createUpdate - Case 1', t => {
   const expected = {
     text: `
       update user_account set
-        (first_name) = ('Bob')
+        first_name = 'Bob'
       where user_account_id = 1 returning *;
     `.replace(/\s+/g, ' ').trim()
   };
@@ -34,7 +34,7 @@ test('createUpdate - Case 2', t => {
   const expected = {
     text: `
       update user_account set
-        (first_name) = ('Bob')
+        first_name = 'Bob'
       where user_account_id = 'abc123' returning *;
     `.replace(/\s+/g, ' ').trim()
   };
@@ -54,7 +54,7 @@ test('createUpdate - Case 3', t => {
   const expected = {
     text: `
       update user_account set
-        (first_name) = ('Bob')
+        first_name = 'Bob'
       where id = 3 returning *;
     `.replace(/\s+/g, ' ').trim()
   };
@@ -75,7 +75,7 @@ test('createUpdate - Case 4', t => {
   const expected = {
     text: `
       update user_account set
-        (first_name, last_name) = ('Bob', 'Johnson')
+        first_name = 'Bob', last_name = 'Johnson'
       where user_account_id = 3 returning *;
     `.replace(/\s+/g, ' ').trim()
   };
@@ -96,7 +96,7 @@ test('createUpdate - Case 5', t => {
   const expected = {
     text: `
       update user_account set
-        (first_name, last_name) = ('Bob', NULL)
+        first_name = 'Bob', last_name = NULL
       where user_account_id = 3 returning *;
     `.replace(/\s+/g, ' ').trim()
   };
