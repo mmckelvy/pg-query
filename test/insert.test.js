@@ -56,6 +56,20 @@ test('insert - Case 2', async (t) => {
   t.deepEqual(actual, expected);
 });
 
+test('insert - Case 3', async (t) => {
+  const actual = await insert({
+      pool: t.context.pool,
+      table: 'user_account',
+      values: {firstName: 'Jim', lastName: 'Jenkins'},
+    });
+
+    const expected = [
+      {first_name: 'Jim', last_name: 'Jenkins'}
+    ];
+
+  t.deepEqual(actual.rows, expected);
+});
+
 test.after.always('Teardown db', async (t) => {
   await t.context.pool.end();
   await execAsync(`dropdb ${t.context.db}`);
