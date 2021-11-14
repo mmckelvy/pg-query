@@ -8,7 +8,7 @@ test('createUpdate - Case 1', t => {
     values: {
       firstName: 'Bob',
     },
-    id: 1
+    where: {userAccountId: 1}
   });
 
   const expected = {
@@ -28,7 +28,7 @@ test('createUpdate - Case 2', t => {
     values: {
       firstName: 'Bob',
     },
-    id: 'abc123'
+    where: {userAccountId: 'abc123'}
   });
 
   const expected = {
@@ -48,8 +48,7 @@ test('createUpdate - Case 3', t => {
     values: {
       firstName: 'Bob',
     },
-    id: 3,
-    idCol: 'id'
+    where: {id: 3}
   });
 
   const expected = {
@@ -70,7 +69,7 @@ test('createUpdate - Case 4', t => {
       firstName: 'Bob',
       lastName: 'Johnson',
     },
-    id: 3,
+    where: {userAccountId: 3}
   });
 
   const expected = {
@@ -91,7 +90,7 @@ test('createUpdate - Case 5', t => {
       firstName: 'Bob',
       lastName: null,
     },
-    id: 3,
+    where: {userAccountId: 3}
   });
 
   const expected = {
