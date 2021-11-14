@@ -21,3 +21,86 @@ test('createUpdate - Case 1', t => {
 
   t.deepEqual(actual, expected);
 });
+
+test('createUpdate - Case 2', t => {
+  const actual = createUpdate({
+    table: 'user_account',
+    values: {
+      firstName: 'Bob',
+    },
+    id: 'abc123'
+  });
+
+  const expected = {
+    text: `
+      update user_account set
+        (first_name) = ('Bob')
+      where user_account_id = 'abc123' returning *;
+    `.replace(/\s+/g, ' ').trim()
+  };
+
+  t.deepEqual(actual, expected);
+});
+
+test('createUpdate - Case 3', t => {
+  const actual = createUpdate({
+    table: 'user_account',
+    values: {
+      firstName: 'Bob',
+    },
+    id: 3,
+    idCol: 'id'
+  });
+
+  const expected = {
+    text: `
+      update user_account set
+        (first_name) = ('Bob')
+      where id = 3 returning *;
+    `.replace(/\s+/g, ' ').trim()
+  };
+
+  t.deepEqual(actual, expected);
+});
+
+test('createUpdate - Case 4', t => {
+  const actual = createUpdate({
+    table: 'user_account',
+    values: {
+      firstName: 'Bob',
+      lastName: 'Johnson',
+    },
+    id: 3,
+  });
+
+  const expected = {
+    text: `
+      update user_account set
+        (first_name, last_name) = ('Bob', 'Johnson')
+      where user_account_id = 3 returning *;
+    `.replace(/\s+/g, ' ').trim()
+  };
+
+  t.deepEqual(actual, expected);
+});
+
+test('createUpdate - Case 5', t => {
+  const actual = createUpdate({
+    table: 'user_account',
+    values: {
+      firstName: 'Bob',
+      lastName: null,
+    },
+    id: 3,
+  });
+
+  const expected = {
+    text: `
+      update user_account set
+        (first_name, last_name) = ('Bob', NULL)
+      where user_account_id = 3 returning *;
+    `.replace(/\s+/g, ' ').trim()
+  };
+
+  t.deepEqual(actual, expected);
+});
