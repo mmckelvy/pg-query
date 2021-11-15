@@ -48,7 +48,7 @@ const pool = require('./path-to-your-pool-instance');
 const { rows } = await query({
   pool,
   sql: `${__dirname}/get-user.sql`,
-  values: {lastName: 'Smith'}
+  values: {lastName: 'Smith'},
 });
 
 console.log(rows);
@@ -165,10 +165,62 @@ console.log(q);
 */
 ```
 
-The `insert` and `update` convenience functions simply take the output of `createInsert` and `createUpdate` respectively and execute the queries, similar to how `createQuery` and `query` work.
+The `insert` and `update` convenience functions simply take the output of `createInsert` and `createUpdate` respectively and execute the queries using node-pg, similar to how `query` works relative to `createQuery`.
 
 ### Transforming output
-// Pick up here
+When using the functions that execute queries (`query`, `insert`, `update`), the default output is what you get from node-pg, e.g.:
+
+```javascript
+{
+  rows: [
+    {first_name: 'John', last_name: 'Smith'}
+  ],
+  fields: [...],
+  _parsers: [...],
+  command: ...
+  // ...etc.
+}
+```
+
+Chances are you want to make some adjustments before you consume this output.  If that's the case, pg-query provides `transform` and `transformFn` options to `query`, `insert`, and `update`.  Setting `transform` to `true` will return the `rows` key (usually the only thing in which you'll be interested) and camel case the keys of each column name (recursively) on the way out:
+
+```javascript
+const userAccounts = await query({
+  pool,
+  sql: `${__dirname}/query.sql`,
+  values: {firstName: 'John', lastName: 'Smith'},
+  transform: true
+});
+
+console.log(userAccounts);
+
+/*
+[
+  {firstName: 'Joe', lastName: 'Smith'}
+]
+*/
+```
+
+You can also pass your own `transformFn` if you'd like to do something different with the results:
+
+```javascript
+const userAccounts = await query({
+  pool,
+  sql: `${__dirname}/query.sql`,
+  values: {firstName: 'John', lastName: 'Smith'},
+  transform: true,
+  // Just return the rows without camel casing the keys.
+  transformFn: (results) => results.rows
+});
+
+console.log(userAccounts);
+
+/*
+[
+  {first_name: 'Joe', last_name: 'Smith'}
+]
+*/
+```
 
 # API
 ### async createQuery({ sql, values, convertUndefined })
@@ -185,9 +237,63 @@ How to treat `undefined` values in the sql string.  Pass `'toNull'` to convert u
 #### return `object`
 A node-postgres query config object with `text` and `values` keys.  `text` will be in parameterized query form and the values will be in a corresponding array.
 
-### async query({ pool?, client?, sql, values, convertUndefined })
+### async query({ pool?, client?, sql, values, convertUndefined, transform, transformFn })
 Same params as `createQuery`, with the addition of `pool`, which is an instance of node-postgres `Pool`, and `client`, which is a `client` from the `pool` (you will only be using pool or client but not both for any given query).
 
-This function will create a node-postgres query config object using `createQuery` and then execute the query using your `pool` or `client` instance.
+`query` also adds two transform params:
 
+#### transform `boolean`
+Whether or not to transform the node-pg output.  If set to `true` and `transformFn` is not supplied, pg-query will use the built-in transform which will return the `rows` property and recursively camel case all column keys.
+
+Defaults to `false`.
+
+#### transformFn `function`
+A custom transform function to be applied to the node-pg results.  Signature is `(results) => transformedResults`.
+
+Note that the `transform` property must also be set to `true` for the `transformFn` to apply.
+
+#### return `object` or results of transform function
 Returns the result of the query.
+
+### createInsert({ table, values })
+
+#### table `string`
+The target table for the insert.  The argument passed for table will be `snake_cased` automatically.
+
+#### values `object or array of objects`
+The row or rows you want to insert.  Object keys should correspond to column names and values should correspond to column values.  All columns names will automatically be `snake_cased`.
+
+#### return `object`
+A node-postgres query config object with a `text` key.  The values will be already included in the text string.  All identifiers, literals, and values will be properly escaped.
+
+### createUpdate({ table, values, where })
+
+### table `string`
+The target table for the update.  The argument passed for table will be `snake_cased` automatically.
+
+### values `object`
+The columns you want to update.  Keys should correspond to column names and values should correspond to column values.  All columns names will automatically be `snake_cased`.
+
+### where `object`
+An object used to build the `where` clause for the update.  The key should be the column name and the value should be the filter value.
+
+### return `object`
+A node-postgres query config object with a `text` key.  The values will be already included in the text string.  All identifiers, literals, and values will be properly escaped.
+
+### insert({ pool?, client?, table, values, transform, transformFn })
+Same params as createInsert with the addition of `pool`, `client`, `transform`, and `transformFn` params, which operate the same as `query`.
+
+Returns the output of a node-pg query or the output of a transform function.
+
+### update({ pool?, client?, table, values, where, transform, transformFn })
+Same params as createUpdate with the addition of `pool`, `client`, `transform`, and `transformFn` params, which operate the same as `query`.
+
+Returns the output of a node-pg query or the output of a transform function.
+
+# Test
+Make sure you have Postgres installed on your machine and then run:
+
+```bash
+npm test
+```
+
