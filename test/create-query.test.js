@@ -1,6 +1,6 @@
 const test = require('ava');
 
-const createQuery = require('../lib/create-query');
+const createQuery = require('../src/create-query');
 
 // Basic query
 test('createQuery - Case 1', async (t) => {

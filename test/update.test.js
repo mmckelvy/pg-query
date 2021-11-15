@@ -6,7 +6,7 @@ const uuid = require('uuid/v4');
 const { Pool } = require('pg');
 
 const execAsync = promisify(exec);
-const update = require('../lib/update');
+const update = require('../src/update');
 
 test.before(async (t) => {
   t.context.db = uuid();

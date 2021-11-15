@@ -1,6 +1,6 @@
 const test = require('ava');
 
-const createUpdate = require('../lib/create-update');
+const createUpdate = require('../src/create-update');
 
 test('createUpdate - Case 1', t => {
   const actual = createUpdate({

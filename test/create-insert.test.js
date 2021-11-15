@@ -1,6 +1,6 @@
 const test = require('ava');
 
-const createInsert = require('../lib/create-insert');
+const createInsert = require('../src/create-insert');
 
 test('createInsert - Case 1', t => {
   const actual = createInsert({
