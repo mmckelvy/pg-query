@@ -8,10 +8,10 @@ const read = promisify(fs.readFile);
 *
 * @param {string} sql - Path to the target sql file.
 * @param {object} values - Keys are column names and values are row values.
-* @param {string} convertUndefined - 'toNull' OR 'toDefault'.  Denotes how to
-* handle a variable that exists in the text string but not in the values
-* object.  Generally should be 'toNull' for SELECT and 'toDefault' for INSERT
-* or UPDATE. 
+* @param {string} convertUndefined - 'toNull', 'toDefault' or 'ignore'.
+* Denotes how to handle a variable that exists in the text string but not
+* in the values object. Generally should be 'toNull' for SELECT and 'toDefault'
+* for INSERT or UPDATE.
 *
 * @return {object} with 'text' and 'values' keys.  'text' value is
 * a parameterized string.
@@ -24,7 +24,8 @@ module.exports = async function createQuery({
   const rawText = await read(sql, {encoding: 'utf8'});
 
   // Remove comments
-  cleaned = rawText.replace(/--.+(\r\n|\r|\n)/g, '');
+  // Accommodate different styles of line breaks across operating systems
+  cleaned = rawText.replace(/--.*(\r\n|\r|\n)/g, '');
 
   // Remove extra whitespace to avoid parsing issues and make testing easier.
   const text = cleaned.replace(/\s+/g, ' ').trim();
@@ -36,8 +37,10 @@ module.exports = async function createQuery({
   }
 
   // match :foo and :'foo'
+  // TODO: try this regex: (?<=\s):\w+|:'\w+'
+
   const interimResults = keys.reduce((acc, key, i) => {
-    const regex = new RegExp(`(?<!:):'*${key}(?=\\b)'*`, 'g');
+    const regex = new RegExp(`(?<=[\\s\\(\\)]):${key}\\b|:'${key}\\b'`, 'g');
 
     acc.text = acc.text.replace(regex, () => {
       return `$${i + 1}`;
@@ -50,16 +53,14 @@ module.exports = async function createQuery({
   }, {text, values: []});
 
   // Handle any undefined variables remaining in the text string.
-  const undefinedRegEx = /(?<!:):'*\w+(?=\b)'*/g;
-
-  if (convertUndefined === 'ignore') {
-    return interimResults;
-  }
+  const undefinedRegEx = /(?<=[\s\(\)]):\w+|:'\w+'/g;
 
   const finalResults = {
     text: interimResults.text.replace(undefinedRegEx, () => {
       if (convertUndefined !== 'toNull' && convertUndefined !== 'toDefault') {
-        throw new Error('convertUndefined must be equal to "toNull" or "toDefault"');
+        throw new Error(
+          'convertUndefined must be "toNull" or "toDefault"'
+        );
       }
 
       const replacementVal = convertUndefined === 'toNull'

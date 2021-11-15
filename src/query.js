@@ -17,6 +17,9 @@ function defaultTransform(results) {
 * @param {object} pool - The pool object from node-postgres.
 * @param {string} sql - Path to the target sql file.
 * @param {object} values - Keys are column names and values are row values.
+* @param {boolean} transform
+* @param {function} transformFn
+* @param {boolean} convertUndefined
 *
 * @return {object} Results object from node-postgres.
 */
@@ -29,11 +32,11 @@ module.exports = async function query({
   transformFn,
   convertUndefined
 }) {
-  const q = await createQuery({sql, values, convertUndefined});
-
   if (client && pool) {
     throw new Error('Provide a pool OR a client, not both');
   }
+
+  const q = await createQuery({sql, values, convertUndefined});
 
   const connection = client || pool;
 
