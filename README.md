@@ -81,7 +81,7 @@ const x = await createQuery({
 If you don't pass anything for `convertUndefined`, `toNull` will be used.
 
 ### Convenience functions
-Simple `insert`s and `update`s are common sql operations that can often have optional column values.  Optional column values can be cumbersome to handle in plain sql, so pg-query provides convenience functions to help you deal with these situations:
+Simple `insert`s and `update`s are common sql operations that often have optional column values.  Optional column values can be cumbersome to handle in plain sql, so pg-query provides convenience functions to help you deal with these situations:
 
 1. `createInsert` - Generate properly escaped `insert` statements.
 2. `createUpdate` - Generate properly escaped `update` statements.
@@ -165,7 +165,48 @@ console.log(q);
 */
 ```
 
-The `insert` and `update` convenience functions simply take the output of `createInsert` and `createUpdate` respectively and execute the queries using node-pg, similar to how `query` works relative to `createQuery`.
+The `insert` and `update` convenience functions simply take the output of `createInsert` and `createUpdate` respectively, and execute the queries using node-pg:
+
+```javascript
+const { insert, update } = require('@mmckelvy/pg-query');
+const pool = require('./path-to-your-pool-instance');
+
+const userAccounts = await insert({
+  pool,
+  table: 'user_account',
+  values: [
+    {firstName: 'Jim', lastName: 'Jenkins'},
+    {firstName: 'Leroy', lastName: 'Smith'},
+    {lastName: 'Jensen', firstName: 'Don'},
+  ],
+  transform: true
+});
+
+console.log(userAccounts);
+
+/*
+[
+  {firstName: 'Jim', lastName: 'Jenkins'},
+  {firstName: 'Leroy', lastName: 'Smith'},
+  {firstName: 'Don', lastName: 'Jensen'},
+];
+*/
+
+const updatedUserAccount = await update({
+  pool,
+  table: 'user_account',
+  values: {firstName: 'Bob', lastName: 'Johnson'},
+  where: {userAccountId: 1},
+  transform: true
+});
+
+console.log(updatedUserAccount);
+/*
+[
+  {userAccountId: 1, firstName: 'Bob', lastName: 'Johnson'}
+];
+*/
+```
 
 ### Transforming output
 When using the functions that execute queries (`query`, `insert`, `update`), the default output is what you get from node-pg, e.g.:
