@@ -273,7 +273,7 @@ An absolute path to the `.sql` file with your query.  It's generally easiest to 
 An object with keys that map to variable names in your `.sql` files.
 
 #### convertUndefined `string`
-How to treat `undefined` values in the sql string.  Pass `'toNull'` to convert undefined values to `null` and `'toDefault'` to convert undefined values to `'default'`, and `'ignore'` to just leave them as is (helpful if you are using the ":" character to format times or something along those lines).
+How to treat `undefined` values in the sql string.  Pass `'toNull'` to convert undefined values to `null` and `'toDefault'` to convert undefined values to `'default'`.
 
 #### return `object`
 A node-postgres query config object with `text` and `values` keys.  `text` will be in parameterized query form and the values will be in a corresponding array.
