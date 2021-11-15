@@ -77,14 +77,98 @@ const x = await createQuery({
   convertUndefined: 'toDefault' // converts any undefined values to 'default'
 });
 
-const z = await createQuery({
-  sql: `${__dirname/query.sql}`,
-  values: {firstName: 'John', lastName: 'Smith'},
-  convertUndefined: 'ignore' // don't attempt any conversions
-});
-
 ```
 If you don't pass anything for `convertUndefined`, `toNull` will be used.
+
+### Convenience functions
+Simple `insert`s and `update`s are common sql operations that can often have optional column values.  Optional column values can be cumbersome to handle in plain sql, so pg-query provides convenience functions to help you deal with these situations:
+
+1. `createInsert` - Generate properly escaped `insert` statements.
+2. `createUpdate` - Generate properly escaped `update` statements.
+3. `insert` - Generate and execute properly escaped `insert` statements.
+4. `update` - Generate and execute properly escaped `update` statements.
+
+`createInsert`:
+
+```javascript
+const { createInsert } = require('@mmckelvy/pg-query');
+
+// Note this function is not async so no await required.
+const q = createInsert({
+  table: 'user_account',
+  values: {firstName: 'Jim', lastName: 'Jenkins'}
+});
+
+console.log(q);
+/*
+{
+  text: `
+    insert into user_account (first_name, last_name)
+    values ('Jim', 'Jenkins')
+    returning *;
+  `
+}
+*/
+
+// Works for bulk inserts as well
+const q = createInsert({
+  table: 'user_account',
+  values: [
+    {
+      firstName: 'Jim',
+      lastName: 'Jenkins'
+    },
+    {
+      firstName: 'Leroy',
+      lastName: 'Smith'
+    },
+  ]
+});
+
+console.log(q);
+/*
+{
+  text: `
+    insert into user_account (first_name, last_name)
+    values
+      ('Jim', 'Jenkins'),
+      ('Leroy', 'Smith')
+    returning *;
+  `
+}
+*/
+```
+
+`createUpdate`:
+
+```javascript
+const { createUpdate } = require('@mmckelvy/pg-query');
+
+// Note this function is not async so no await required.
+const q = createUpdate({
+  table: 'user_account',
+  values: {firstName: 'Bob', lastName: 'Johnson'},
+  where: {userAccountId: 1}
+});
+
+console.log(q);
+/*
+{
+  text: `
+    update user_account set
+      first_name = 'Bob',
+      last_name = 'Johnson'
+    where user_account_id = 1
+    returning *;
+  `
+}
+*/
+```
+
+The `insert` and `update` convenience functions simply take the output of `createInsert` and `createUpdate` respectively and execute the queries, similar to how `createQuery` and `query` work.
+
+### Transforming output
+// Pick up here
 
 # API
 ### async createQuery({ sql, values, convertUndefined })
