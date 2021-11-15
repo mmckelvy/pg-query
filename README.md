@@ -223,7 +223,7 @@ When using the functions that execute queries (`query`, `insert`, `update`), the
 }
 ```
 
-Chances are you want to make some adjustments before you consume this output.  If that's the case, pg-query provides `transform` and `transformFn` options to `query`, `insert`, and `update`.  Setting `transform` to `true` will return the `rows` key (usually the only thing in which you'll be interested) and camel case the keys of each column name (recursively) on the way out:
+Chances are you want to make some adjustments before you consume this output.  If that's the case, pg-query provides `transform` and `transformFn` options to `query`, `insert`, and `update`.  Setting `transform` to `true` will return the `rows` key (usually the only thing in which you'll be interested) and `camelCase` the keys of each column name (recursively) on the way out:
 
 ```javascript
 const userAccounts = await query({
@@ -250,7 +250,7 @@ const userAccounts = await query({
   sql: `${__dirname}/query.sql`,
   values: {firstName: 'John', lastName: 'Smith'},
   transform: true,
-  // Just return the rows without camel casing the keys.
+  // Just return the rows without camelCasing the keys.
   transformFn: (results) => results.rows
 });
 
@@ -284,7 +284,7 @@ Same params as `createQuery`, with the addition of `pool`, which is an instance 
 `query` also adds two transform params:
 
 #### transform `boolean`
-Whether or not to transform the node-pg output.  If set to `true` and `transformFn` is not supplied, pg-query will use the built-in transform which will return the `rows` property and recursively camel case all column keys.
+Whether or not to transform the node-pg output.  If set to `true` and `transformFn` is not supplied, pg-query will use the built-in transform which will return the `rows` property and recursively `camelCase` all column keys.
 
 Defaults to `false`.
 
@@ -309,16 +309,16 @@ A node-postgres query config object with a `text` key.  The values will be alrea
 
 ### createUpdate({ table, values, where })
 
-### table `string`
+#### table `string`
 The target table for the update.  The argument passed for table will be `snake_cased` automatically.
 
-### values `object`
+### #values `object`
 The columns you want to update.  Keys should correspond to column names and values should correspond to column values.  All columns names will automatically be `snake_cased`.
 
-### where `object`
+#### where `object`
 An object used to build the `where` clause for the update.  The key should be the column name and the value should be the filter value.
 
-### return `object`
+#### return `object`
 A node-postgres query config object with a `text` key.  The values will be already included in the text string.  All identifiers, literals, and values will be properly escaped.
 
 ### insert({ pool?, client?, table, values, transform, transformFn })
