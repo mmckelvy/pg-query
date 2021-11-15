@@ -2,7 +2,8 @@ const test = require('ava');
 
 const createQuery = require('../lib/create-query');
 
-test('createQuery - Should create a proper query', async (t) => {
+// Basic query
+test('createQuery - Case 1', async (t) => {
   const actual = await createQuery({
     sql: `${__dirname}/query.sql`,
     values: {firstName: 'John', lastName: 'Steve'},
@@ -17,7 +18,8 @@ test('createQuery - Should create a proper query', async (t) => {
   t.deepEqual(actual, expected);
 });
 
-test('createQuery - Should work with no params', async (t) => {
+// No params
+test('createQuery - Case 2', async (t) => {
   const actual = await createQuery({
     sql: `${__dirname}/no-params.sql`
   });
@@ -30,7 +32,8 @@ test('createQuery - Should work with no params', async (t) => {
   t.deepEqual(actual, expected);
 });
 
-test('createQuery - Work with numbers and do not mess up types', async (t) => {
+// Complex query
+test('createQuery - Case 3', async (t) => {
   const actual = await createQuery({
     sql: `${__dirname}/complex-query.sql`,
     values: {
@@ -46,7 +49,8 @@ test('createQuery - Work with numbers and do not mess up types', async (t) => {
   t.deepEqual(actual, expected);
 });
 
-test('createQuery - Handle arrays', async (t) => {
+// Work with arrays
+test('createQuery - Case 4', async (t) => {
   const actual = await createQuery({
     sql: `${__dirname}/array-query.sql`,
     values: {
@@ -62,7 +66,8 @@ test('createQuery - Handle arrays', async (t) => {
   t.deepEqual(actual, expected);
 });
 
-test('createQuery - Should remove comments', async (t) => {
+// With comments
+test('createQuery - Case 5', async (t) => {
   const actual = await createQuery({
     sql: `${__dirname}/with-comments.sql`,
     values: {firstName: 'John', lastName: 'Steve'},
@@ -77,7 +82,8 @@ test('createQuery - Should remove comments', async (t) => {
   t.deepEqual(actual, expected);
 });
 
-test('createQuery - Should convert undefined keys to null', async (t) => {
+// Handle nulls
+test('createQuery - Case 6', async (t) => {
   const actual = await createQuery({
     sql: `${__dirname}/with-nulls.sql`,
     values: {firstName: 'John'},
@@ -91,7 +97,8 @@ test('createQuery - Should convert undefined keys to null', async (t) => {
   t.deepEqual(actual, expected);
 });
 
-test('createQuery - Should convert undefined keys to default', async (t) => {
+// Handle defaults
+test('createQuery - Case 7', async (t) => {
   const actual = await createQuery({
     sql: `${__dirname}/with-defaults.sql`,
     values: {firstName: 'John'},
@@ -106,7 +113,8 @@ test('createQuery - Should convert undefined keys to default', async (t) => {
   t.deepEqual(actual, expected);
 });
 
-test('createQuery - Should handle similar variable names', async (t) => {
+// Handle similar variable names
+test('createQuery - Case 8', async (t) => {
   const actual = await createQuery({
     sql: `${__dirname}/variable-names.sql`,
     values: {message: 'John', messageTimestamp: '2020-10-12T18:20:03.414Z'},
@@ -120,7 +128,8 @@ test('createQuery - Should handle similar variable names', async (t) => {
   t.deepEqual(actual, expected);
 });
 
-test('createQuery - Should handle undefined similar names', async (t) => {
+// Similar variable names with default params
+test('createQuery - Case 9', async (t) => {
   const actual = await createQuery({
     sql: `${__dirname}/variable-names.sql`,
     values: {message: 'John'},
@@ -135,11 +144,11 @@ test('createQuery - Should handle undefined similar names', async (t) => {
   t.deepEqual(actual, expected);
 });
 
-test('createQuery - Should handle ignore cases', async (t) => {
+// Handle colons in sql literal
+test('createQuery - Case 10', async (t) => {
   const actual = await createQuery({
     sql: `${__dirname}/ignore.sql`,
     values: {firstName: 'John'},
-    convertUndefined: 'ignore'
   });
 
   const expected = {
