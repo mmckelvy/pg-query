@@ -60,7 +60,7 @@ console.log(rows);
 ```
 
 ### Handling undefined / optional values
-Sometimes you'll want to use values that may or may not be present (i.e. they will be `undefined`) in your queries.  This typically happens when you have optional fields for `inserts` or dynamic filter parameters for `where` clauses.  To handle these potentially undefined fields, pg-query gives you the option to convert them to `null` or `default` (you can also just leave them as is).  Just pass in the appropriate option like so:
+Sometimes you'll want to use values that may or may not be present (i.e. they will be `undefined`) in your queries.  This typically happens when you have optional fields for `inserts` or dynamic filter parameters for `where` clauses.  To handle these potentially undefined fields, pg-query gives you the option to convert them to `null` or `default`.  Just pass in the appropriate option like so:
 
 ```javascript
 const { createQuery } = require('@mmckelvy/pg-query');
@@ -85,7 +85,6 @@ const z = await createQuery({
 
 ```
 If you don't pass anything for `convertUndefined`, `toNull` will be used.
-
 
 # API
 ### async createQuery({ sql, values, convertUndefined })
