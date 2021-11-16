@@ -8,7 +8,7 @@ const read = promisify(fs.readFile);
 *
 * @param {string} sql - Path to the target sql file.
 * @param {object} values - Keys are column names and values are row values.
-* @param {string} convertUndefined - 'toNull', 'toDefault' or 'ignore'.
+* @param {string} convertUndefined - 'toNull' or 'toDefault'.
 * Denotes how to handle a variable that exists in the text string but not
 * in the values object. Generally should be 'toNull' for SELECT and 'toDefault'
 * for INSERT or UPDATE.
@@ -25,7 +25,7 @@ module.exports = async function createQuery({
 
   // Remove comments
   // Accommodate different styles of line breaks across operating systems
-  cleaned = rawText.replace(/--.*(\r\n|\r|\n)/g, '');
+  const cleaned = rawText.replace(/--.*(\r\n|\r|\n)/g, '');
 
   // Remove extra whitespace to avoid parsing issues and make testing easier.
   const text = cleaned.replace(/\s+/g, ' ').trim();
@@ -37,8 +37,6 @@ module.exports = async function createQuery({
   }
 
   // match :foo and :'foo'
-  // TODO: try this regex: (?<=\s):\w+|:'\w+'
-
   const interimResults = keys.reduce((acc, key, i) => {
     const regex = new RegExp(`(?<=[\\s\\(\\)]):${key}\\b|:'${key}\\b'`, 'g');
 
