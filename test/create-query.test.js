@@ -158,3 +158,15 @@ test('createQuery - Case 10', async (t) => {
 
   t.deepEqual(actual, expected);
 });
+
+// Bad convertUndefined param
+test('createQuery - Case 11', async (t) => {
+  const actual = createQuery({
+    sql: `${__dirname}/variable-names.sql`,
+    values: {message: 'John'},
+    convertUndefined: 'toFoo'
+  });
+
+  const error = await t.throwsAsync(actual);
+  t.is(error.message, 'convertUndefined must be "toNull" or "toDefault"');
+});
